@@ -423,3 +423,159 @@ router.post('/addDoc', function(req,res,next){
     }
   )
 })
+
+router.post('/checkIn', function(req,res,next){
+  /*
+    Request from client to add a sample of docs from a colleciton.
+    //Request should be in the form
+    {
+      venue,
+      date,
+      url,
+      location
+    }
+    // Response will be
+    {
+      success: boolean,
+      error: string
+    }
+  */
+  var requestBody = req.body;
+  var database = new DB;
+
+  database.connect(config.makerMongoDBURI)
+  .then(
+    function(){
+      var checkIn = {
+        venueName: requestBody.venue,
+        date: requestBody.date,
+        url: requestBody.url,
+        mapRef: requestBody.location
+      }
+      //Returning will pass promise returned by addDoc to next .then in the chain
+      return database.addDocument(config.checkinCollection, checkIn)
+    }
+  )
+  .then(
+    function(docs){
+      return {
+        "success": true,
+        "error": ""
+      };
+    },
+    function(error){
+      console.log("Failed to add document: "+error)
+      return {
+        "success": false,
+        "error": "Failed to add document"+error
+      };
+    }
+  )
+  .then(
+    function(resultObject){
+      database.close();
+      res.json(resultObject);
+    }
+  )
+})
+
+router.get('checkInCount', function(req,res,next){
+  /*Request from client for the number of checkins
+  // response will contain
+  {
+    success: boolean,
+    count: number,
+    error: string
+  }
+  */
+  var requestBody = req.body;
+  var database = new DB;
+
+  database.connect(config.makerMongoDBURI)
+  .then(
+    function(){
+      // Returning will pass promise by countDOcuments to next
+      // .then in the chain
+      return database.countDocuments(config.checkinCollection)
+    }
+  )
+  .then(
+    function(count){
+      return {
+        "success": true,
+        "count": count,
+        "error": ""
+      };
+    },
+    function(error){
+      console.log("Failed to count checkins: "+error)
+      return {
+        "success": false,
+        "count": 0,
+        "error": "Failed to count checkins: "+error
+      };
+    }
+  )
+  .then(
+    function(resultObject){
+      database.close();
+      res.json(resultObject);
+    }
+  )
+})
+
+router.get('/latestCheckIn',function(req,res,next){
+  /*
+    Request from client for the no of checkins
+    // response wll contain
+    {
+      success:boolean,
+      venue,
+      date,
+      url,
+      location,
+      error:string
+    }
+  */
+  var requestBody = req.body;
+  var database = new DB;
+
+  database.connect(config.makerMongoDBURI)
+  .then(
+    function(){
+      // Returning will pass the promise returned by mostRecentDocument to
+      // next .then in the chain
+      return database.mostRecentDocument(config.checkinCollection)
+    }
+  )
+  .then(
+    function(doc){
+      return {
+        "success": true,
+        "venue": doc.venueName,
+        "date": doc.date,
+        "url": doc.url,
+        "location": doc.mapRef,
+        "error": ""s
+      };
+    },
+    function(error){
+      return {
+        "success": false,
+        "venue": "",
+        "date": "",
+        "url": "",
+        "location": "",
+        "error": "failed to find last checkin: "+error
+      };
+    }
+  )
+  .then(
+    function(resultObject){
+      database.close();
+      res.json(resultObject);
+    }
+  )
+})
+
+module.exports=router;
