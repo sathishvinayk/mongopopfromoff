@@ -144,7 +144,7 @@ export class DataService {
   let headers = new Headers({'Content-Type': 'application/json'});
   let options = new RequestOptions({headers: headers})
 
-  let countDocsRequest new CountDocsRequest(this.MongoDBURI, CollName);
+  let countDocsRequest = new CountDocsRequest(this.MongoDBURI, CollName);
   let url: string = this.baseURL +"countDocs";
 
   return this.http.post(url, countDocsRequest, options)
@@ -177,6 +177,7 @@ sendAddDoc(CollName:string, DocURL: string, DocCount: number,
     let headers = new Headers({'Content-Type': 'application/json'});
     let options = new RequestOptions({headers: headers});
     let sampleDocsRequest = new SampleDocsRequest(this.MongoDBURI, CollName, NumberDocs)
+    let url: string = this.baseURL + "sampleDocs";
 
     return this.http.post(url, sampleDocsRequest, options)
       .timeout(360000000, new Error('Timeout exceeded'))
