@@ -1,0 +1,27 @@
+<h1>Welcome to MongoPop</h1>
+<div>
+  <p>
+    The Ip Address of server running MongoPop is {{serverIP}}, if using
+      <a href="https://cloud.mongodb.com/" name="MongoDB Atlas" target="_blank">MongoDB Atlas</a>
+      please make sure you've added this to your IP Whitelist unless you have VPC peering configured.
+	</p>
+</div>
+<div>
+  <p>
+    Connect string provided by MongoDB Atlas:
+    <input #MongoDBBaseString id="MongoDB-base-string" value="{{dbInputs.MongoDBBaseURI}}"\
+        (keyup)="setBaseURI(MongoDBBaseString.value)" />
+  </p>
+</div>
+<!--Only ask for pass if mongoDb uri has been changed from localhost-->
+<div *ngIf = "dbInputs.MongoDBUser">
+  <p>
+    Password for user {{dBInputs.MongoDBUser}}:
+    <input #MongoDBPassword id="MongoDB-password" value="{{dBInputs.MongoDBUserPassword}}"
+      type="password" (keyup)="setPassword(MongoDBPassword.value)" (change)="setPassword(MongoDBPassword.value)" />
+  </p>
+</div>
+<p>
+  preferred database name:
+  <input #MongoDBDBName id="MongoDb-db-name" value = "{{dBInputs.MongoDBDatabaseName}}"
+</p>

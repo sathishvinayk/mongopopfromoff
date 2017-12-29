@@ -28,6 +28,12 @@ export class DataService {
       .catch((error:any)=>Observable.throw(error.json().error || 'Server error'))
   }
 
+  fetchClientConfig(): Observable<ClientConfig> {
+    return this.http.get(this.baseURL + "config")
+    .map(response => response.json())
+    .catch((error:any)=>Observable.throw(error.json().error || 'Server error'))
+  }
+
   setMongoDBURI(MongoDBURI: string){
     this.MongoDBURI = MongoDBURI;
   }
